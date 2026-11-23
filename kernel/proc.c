@@ -124,6 +124,10 @@ allocproc(void)
 found:
   p->pid = allocpid();
   p->state = USED;
+  p->alarm_interval = 0;
+  p->alarm_ticks = 0;
+  p->alarm_handler = 0;
+  p->alarm_active = 0;
 
   // Allocate a trapframe page.
   if ((p->trapframe = (struct trapframe *)kalloc()) == 0) {
@@ -280,6 +284,12 @@ kfork(void)
 
   // Cause fork to return 0 in the child.
   np->trapframe->a0 = 0;
+
+  // A child starts with its timer disabled, but may need to finish a handler.
+  if (p->alarm_active) {
+    np->alarm_saved = p->alarm_saved;
+    np->alarm_active = 1;
+  }
 
   // increment reference counts on open file descriptors.
   for (i = 0; i < NOFILE; i++)
