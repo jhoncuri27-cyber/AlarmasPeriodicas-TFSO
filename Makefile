@@ -149,6 +149,7 @@ UPROGS=\
 	$U/_logstress\
 	$U/_forphan\
 	$U/_dorphan\
+	$U/_alarmas_test\
 	$U/_sync\
 	$U/_alarma_demo\
 
